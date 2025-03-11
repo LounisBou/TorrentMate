@@ -4,10 +4,13 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="TorrentMate",
+    name="torrentmate",
     version="1.0.0",
     packages=find_packages(),
-    install_requires=[],
+    install_requires=[
+        "mediainfo>=5.0.0",
+        "mktorrent>=1.1",
+    ],
     
     # Metadata
     author="LounisBou",
@@ -33,7 +36,7 @@ setup(
     # Entry points
     entry_points={
         "console_scripts": [
-            "torrentmate=torrentmate.torrentmate:main",
+            "torrent-mate=torrentmate.torrentmate:main",
         ],
     },
 

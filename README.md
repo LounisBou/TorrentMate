@@ -29,7 +29,7 @@ A comprehensive Python tool to create torrent files, NFO files, and BBCode descr
 sudo apt install mediainfo mktorrent
 
 # Install the package
-pip install mktorrent
+pip install torrentmate
 ```
 
 Or install from source:
