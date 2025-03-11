@@ -19,8 +19,8 @@ A comprehensive Python tool to create torrent files, NFO files, and BBCode descr
 ## Requirements
 
 - Python 3.6+
-- mediainfo: for media file analysis
-- mktorrent: for torrent file creation
+- [mediainfo CLI: for media file analysis](https://mediaarea.net/fr/MediaInfo/Download)
+- [mktorrent: for torrent file creation](https://github.com/pobrn/mktorrent)
 
 ## Installation
 
@@ -80,4 +80,4 @@ For a media folder named "Movie Title (2023)", the script generates:
 
 ## License
 
-MIT
+[MIT License](./LICENSE)
