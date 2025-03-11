@@ -37,7 +37,11 @@ class TorrentMate:
         # Initialize components
         self.analyzer = ContentAnalyzer(self.folder_path)
         first_video = self.analyzer.find_first_video_file()
-        self.media_info = MediaInfo(first_video).metadata
+        
+        # Store the MediaInfo instance to access raw output later
+        self.media_info_instance = MediaInfo(first_video)
+        self.media_info = self.media_info_instance.metadata
+        
         self.generator = ContentGenerator(self.media_info, self.analyzer)
         self.torrent_title = self.generator.generate_torrent_title()
 
@@ -71,14 +75,19 @@ class TorrentMate:
 
     def create_nfo(self) -> bool:
         """
-        Create the NFO file.
+        Create the NFO file with raw mediainfo output.
         
         :return: bool - True if successful, False otherwise
         """
         nfo_file = f"{self.torrent_title}.nfo"
         
         try:
-            nfo_content = self.generator.generate_nfo_content()
+            # Get raw mediainfo output from the MediaInfo instance
+            raw_mediainfo = self.media_info_instance.get_raw_output() if hasattr(self, 'media_info_instance') else ""
+            
+            # Generate NFO content with raw mediainfo
+            nfo_content = self.generator.generate_nfo_content(raw_mediainfo)
+            
             with open(nfo_file, 'w', encoding='utf-8') as f:
                 f.write(nfo_content)
             print(f"NFO file created: {nfo_file}")

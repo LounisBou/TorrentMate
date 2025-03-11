@@ -34,21 +34,23 @@ class ContentGenerator:
                     f"{self.media_info.get('language_tag', '')} - {self.media_info.get('source', '')} - "
                     f"{self.media_info.get('resolution', '')} - {self.media_info.get('video_codec', '').split(' ')[0]}")
 
-    def generate_nfo_content(self) -> str:
+    def generate_nfo_content(self, raw_mediainfo: str = "") -> str:
         """
         Generate NFO file content.
         
+        :param raw_mediainfo: str - Raw mediainfo output to include at the beginning
         :return: str - Formatted NFO content
         """
         if self.analyzer.content_type == "serie":
-            return self._generate_serie_nfo()
+            return self._generate_serie_nfo(raw_mediainfo)
         else:
-            return self._generate_film_nfo()
+            return self._generate_film_nfo(raw_mediainfo)
 
-    def _generate_serie_nfo(self) -> str:
+    def _generate_serie_nfo(self, raw_mediainfo: str = "") -> str:
         """
         Generate NFO content for a TV series.
         
+        :param raw_mediainfo: str - Raw mediainfo output to include at the beginning
         :return: str - Formatted NFO content for a series
         """
         title = self.analyzer.title
@@ -63,41 +65,53 @@ class ContentGenerator:
         if self.media_info.get('duration', '0').replace('.', '', 1).isdigit():
             duration = str(int(float(self.media_info.get('duration', '0')) / 60))
         
-        return f"""░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-░░░░░░░░░░░░░░░░░░░░░░ {title.upper()} ({year_range}) ░░░░░░░░░░░░░░░░░░░░░░░░░
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+        # Add raw mediainfo at the beginning if provided
+        raw_mediainfo_section = ""
+        if raw_mediainfo:
+            raw_mediainfo_section = f"""
+            MEDIAINFO OUTPUT:
+            ================================================================================
+            {raw_mediainfo}
+            ================================================================================
 
-▓ INFORMATIONS GÉNÉRALES
- ▪ Titre.............: {title}
- ▪ Année.............: {year_range}
- ▪ Genres............: À compléter
- ▪ Créateurs.........: À compléter
- ▪ Acteurs principaux.: À compléter
- ▪ Saisons...........: {self.analyzer.season_count} saison{'s' if self.analyzer.season_count > 1 else ''} ({self.analyzer.episode_count} épisode{'s' if self.analyzer.episode_count > 1 else ''})
- ▪ Langue............: {self.media_info.get('language_tag', 'Unknown')}
+            """
+        
+        return f"""{raw_mediainfo_section}░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+        ░░░░░░░░░░░░░░░░░░░░░░ {title.upper()} ({year_range}) ░░░░░░░░░░░░░░░░░░░░░░░░░
+        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-▓ INFORMATIONS TECHNIQUES
- ▪ Format............: {self.media_info.get('format', 'Unknown')}
- ▪ Durée moyenne.....: ~{duration} minutes par épisode
- ▪ Source............: {self.media_info.get('source', 'Unknown')}
- ▪ Résolution........: {self.media_info.get('resolution', 'Unknown')} ({self.media_info.get('width', 'Unknown')}x{self.media_info.get('height', 'Unknown')})
- ▪ Codec Vidéo.......: {self.media_info.get('video_codec', 'Unknown')}
- ▪ Bitrate Vidéo.....: ~{bitrate} kb/s
- ▪ Codec Audio.......: {', '.join(self.media_info.get('audio_codecs', ['Unknown']))}
- ▪ Sous-titres.......: {', '.join(self.media_info.get('subtitle_languages', ['None']))}
+        ▓ INFORMATIONS GÉNÉRALES
+        ▪ Titre.............: {title}
+        ▪ Année.............: {year_range}
+        ▪ Genres............: À compléter
+        ▪ Créateurs.........: À compléter
+        ▪ Acteurs principaux.: À compléter
+        ▪ Saisons...........: {self.analyzer.season_count} saison{'s' if self.analyzer.season_count > 1 else ''} ({self.analyzer.episode_count} épisode{'s' if self.analyzer.episode_count > 1 else ''})
+        ▪ Langue............: {self.media_info.get('language_tag', 'Unknown')}
 
-▓ SYNOPSIS
-À compléter
+        ▓ INFORMATIONS TECHNIQUES
+        ▪ Format............: {self.media_info.get('format', 'Unknown')}
+        ▪ Durée moyenne.....: ~{duration} minutes par épisode
+        ▪ Source............: {self.media_info.get('source', 'Unknown')}
+        ▪ Résolution........: {self.media_info.get('resolution', 'Unknown')} ({self.media_info.get('width', 'Unknown')}x{self.media_info.get('height', 'Unknown')})
+        ▪ Codec Vidéo.......: {self.media_info.get('video_codec', 'Unknown')}
+        ▪ Bitrate Vidéo.....: ~{bitrate} kb/s
+        ▪ Codec Audio.......: {', '.join(self.media_info.get('audio_codecs', ['Unknown']))}
+        ▪ Sous-titres.......: {', '.join(self.media_info.get('subtitle_languages', ['None']))}
 
-▓ INFORMATIONS COMPLÉMENTAIRES
-Ce torrent contient l'intégrale de la série {title}, de la saison 1 à la saison {self.analyzer.season_count}, en version {self.media_info.get('language_tag', '')}. Chaque épisode est accompagné de son fichier NFO détaillé et d'une miniature.
+        ▓ SYNOPSIS
+        À compléter
 
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░"""
+        ▓ INFORMATIONS COMPLÉMENTAIRES
+        Ce torrent contient l'intégrale de la série {title}, de la saison 1 à la saison {self.analyzer.season_count}, en version {self.media_info.get('language_tag', '')}. Chaque épisode est accompagné de son fichier NFO détaillé et d'une miniature.
 
-    def _generate_film_nfo(self) -> str:
+        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░"""
+
+    def _generate_film_nfo(self, raw_mediainfo: str = "") -> str:
         """
         Generate NFO content for a movie.
         
+        :param raw_mediainfo: str - Raw mediainfo output to include at the beginning
         :return: str - Formatted NFO content for a movie
         """
         title = self.analyzer.title
@@ -112,32 +126,43 @@ Ce torrent contient l'intégrale de la série {title}, de la saison 1 à la sais
         if self.media_info.get('duration', '0').replace('.', '', 1).isdigit():
             duration = str(int(float(self.media_info.get('duration', '0')) / 60))
         
-        return f"""░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-░░░░░░░░░░░░░░░░░░░░░░ {title.upper()} ({year}) ░░░░░░░░░░░░░░░░░░░░░░░░░
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+        # Add raw mediainfo at the beginning if provided
+        raw_mediainfo_section = ""
+        if raw_mediainfo:
+            raw_mediainfo_section = f"""
+            MEDIAINFO OUTPUT:
+            ================================================================================
+            {raw_mediainfo}
+            ================================================================================
 
-▓ INFORMATIONS GÉNÉRALES
- ▪ Titre.............: {title}
- ▪ Année.............: {year}
- ▪ Genres............: À compléter
- ▪ Réalisateur.......: À compléter
- ▪ Acteurs principaux.: À compléter
- ▪ Langue............: {self.media_info.get('language_tag', 'Unknown')}
+            """
+        
+        return f"""{raw_mediainfo_section}░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+        ░░░░░░░░░░░░░░░░░░░░░░ {title.upper()} ({year}) ░░░░░░░░░░░░░░░░░░░░░░░░░
+        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-▓ INFORMATIONS TECHNIQUES
- ▪ Format............: {self.media_info.get('format', 'Unknown')}
- ▪ Durée.............: {duration} minutes
- ▪ Source............: {self.media_info.get('source', 'Unknown')}
- ▪ Résolution........: {self.media_info.get('resolution', 'Unknown')} ({self.media_info.get('width', 'Unknown')}x{self.media_info.get('height', 'Unknown')})
- ▪ Codec Vidéo.......: {self.media_info.get('video_codec', 'Unknown')}
- ▪ Bitrate Vidéo.....: ~{bitrate} kb/s
- ▪ Codec Audio.......: {', '.join(self.media_info.get('audio_codecs', ['Unknown']))}
- ▪ Sous-titres.......: {', '.join(self.media_info.get('subtitle_languages', ['None']))}
+        ▓ INFORMATIONS GÉNÉRALES
+        ▪ Titre.............: {title}
+        ▪ Année.............: {year}
+        ▪ Genres............: À compléter
+        ▪ Réalisateur.......: À compléter
+        ▪ Acteurs principaux.: À compléter
+        ▪ Langue............: {self.media_info.get('language_tag', 'Unknown')}
 
-▓ SYNOPSIS
-À compléter
+        ▓ INFORMATIONS TECHNIQUES
+        ▪ Format............: {self.media_info.get('format', 'Unknown')}
+        ▪ Durée.............: {duration} minutes
+        ▪ Source............: {self.media_info.get('source', 'Unknown')}
+        ▪ Résolution........: {self.media_info.get('resolution', 'Unknown')} ({self.media_info.get('width', 'Unknown')}x{self.media_info.get('height', 'Unknown')})
+        ▪ Codec Vidéo.......: {self.media_info.get('video_codec', 'Unknown')}
+        ▪ Bitrate Vidéo.....: ~{bitrate} kb/s
+        ▪ Codec Audio.......: {', '.join(self.media_info.get('audio_codecs', ['Unknown']))}
+        ▪ Sous-titres.......: {', '.join(self.media_info.get('subtitle_languages', ['None']))}
 
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░"""
+        ▓ SYNOPSIS
+        À compléter
+
+        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░"""
 
     def generate_bbcode_content(self) -> str:
         """
@@ -167,39 +192,45 @@ Ce torrent contient l'intégrale de la série {title}, de la saison 1 à la sais
         if self.media_info.get('overall_bitrate', '0').isdigit():
             bitrate = str(int(int(self.media_info.get('overall_bitrate', '0')) / 1000))
             
-        duration = "?"
+        duration = "45m"  # Default to 45 minutes for episode duration
         if self.media_info.get('duration', '0').replace('.', '', 1).isdigit():
-            duration = str(int(float(self.media_info.get('duration', '0')) / 60))
+            duration_min = int(float(self.media_info.get('duration', '0')) / 60)
+            duration = f"{duration_min}m"
         
-        return f"""[center][img=600x800]https://URL_DE_VOTRE_IMAGE/poster.jpg[/img][/center]
+        return f"""[center][img]https://URL_DE_VOTRE_IMAGE/poster.jpg[/img][/center]
 
-[center][size=18][b]{torrent_title}[/b][/size][/center]
+        [center][size=18][b]{torrent_title}[/b][/size][/center]
 
-[b]Créateurs:[/b] À compléter
-[b]Acteurs principaux:[/b] À compléter
-[b]Genre:[/b] À compléter
-[b]Année de sortie:[/b] {year_range}
 
-[b]Résumé:[/b]
-À compléter
+        [center][img]https://forward.pm/img/informations.png[/img]
 
-[b]Informations sur l'upload:[/b]
-[list]
-[*]Format: {self.media_info.get('format', 'Unknown')}
-[*]Langues: {self.media_info.get('language_tag', 'Unknown')} ({', '.join(self.media_info.get('audio_languages', ['Unknown']))})
-[*]Source: {self.media_info.get('source', 'Unknown')}
-[*]Résolution: {self.media_info.get('resolution', 'Unknown')} ({self.media_info.get('width', 'Unknown')}x{self.media_info.get('height', 'Unknown')})
-[*]Codec vidéo: {self.media_info.get('video_codec', 'Unknown')}
-[*]Bitrate vidéo: ~{bitrate} kb/s
-[*]Codec audio: {', '.join(self.media_info.get('audio_codecs', ['Unknown']))}
-[*]Sous-titres: {', '.join(self.media_info.get('subtitle_languages', ['None']))}
-[*]Nombre d'épisodes: {self.analyzer.episode_count}
-[*]Nombre de saisons: {self.analyzer.season_count}
-[/list]
+        [b]Créateurs:[/b] À compléter
+        [b]Acteurs:[/b] 
+        Acteur 1, 
+        Acteur 2, 
+        Acteur 3, 
+        Acteur 4
+        [b]Durée:[/b] {duration}
+        [b]Genre:[/b] À compléter
+        [b]Diffusion:[/b] {year_range}[/center]
 
-[center][img=700x175]https://URL_DE_VOTRE_IMAGE/banner.jpg[/img][/center]
+        [center][img]https://forward.pm/img/synopsis.png[/img]
 
-[center][img]https://URL_DE_VOTRE_IMAGE/fanart.jpg[/img][/center]"""
+        À compléter[/center]
+
+        [center][img]https://forward.pm/img/upload.png[/img]
+        [/center][center][b]Format:[/b] {self.media_info.get('format', 'Unknown')}
+        [b]Langues:[/b] {self.media_info.get('language_tag', 'Unknown')} ({', '.join(self.media_info.get('audio_languages', ['Unknown']))})
+        [b]Source:[/b] {self.media_info.get('source', 'Unknown')}
+        [b]Résolution: [/b]{self.media_info.get('resolution', 'Unknown')} ({self.media_info.get('width', 'Unknown')}x{self.media_info.get('height', 'Unknown')})
+        [b]Codec vidéo:[/b] {self.media_info.get('video_codec', 'Unknown').split(' ')[0]}
+        [b]Bitrate vidéo:[/b] ~{bitrate} kb/s
+        [b]Codec audio:[/b] {', '.join(self.media_info.get('audio_codecs', ['Unknown']))}
+        [b]Sous-titres:[/b] {', '.join(self.media_info.get('subtitle_languages', ['None']))}
+        [b]Nombre d'épisodes: [/b]{self.analyzer.episode_count}
+        [b]Nombre de saisons:[/b] {self.analyzer.season_count}[/center][left][/left][left][/left]
+
+        """
 
     def _generate_film_bbcode(self) -> str:
         """
@@ -220,33 +251,38 @@ Ce torrent contient l'intégrale de la série {title}, de la saison 1 à la sais
             
         duration = "?"
         if self.media_info.get('duration', '0').replace('.', '', 1).isdigit():
-            duration = str(int(float(self.media_info.get('duration', '0')) / 60))
+            duration_min = int(float(self.media_info.get('duration', '0')) / 60)
+            duration = f"{duration_min}m"
         
-        return f"""[center][img=600x800]https://URL_DE_VOTRE_IMAGE/poster.jpg[/img][/center]
+        return f"""[center][img]https://URL_DE_VOTRE_IMAGE/poster.jpg[/img][/center]
 
-[center][size=18][b]{torrent_title}[/b][/size][/center]
-
-[b]Réalisateur:[/b] À compléter
-[b]Acteurs principaux:[/b] À compléter
-[b]Genre:[/b] À compléter
-[b]Année de sortie:[/b] {year}
-
-[b]Résumé:[/b]
-À compléter
-
-[b]Informations sur l'upload:[/b]
-[list]
-[*]Format: {self.media_info.get('format', 'Unknown')}
-[*]Langues: {self.media_info.get('language_tag', 'Unknown')} ({', '.join(self.media_info.get('audio_languages', ['Unknown']))})
-[*]Source: {self.media_info.get('source', 'Unknown')}
-[*]Résolution: {self.media_info.get('resolution', 'Unknown')} ({self.media_info.get('width', 'Unknown')}x{self.media_info.get('height', 'Unknown')})
-[*]Codec vidéo: {self.media_info.get('video_codec', 'Unknown')}
-[*]Bitrate vidéo: ~{bitrate} kb/s
-[*]Codec audio: {', '.join(self.media_info.get('audio_codecs', ['Unknown']))}
-[*]Sous-titres: {', '.join(self.media_info.get('subtitle_languages', ['None']))}
-[*]Durée: {duration} minutes
-[/list]
-
-[center][img]https://URL_DE_VOTRE_IMAGE/fanart.jpg[/img][/center]"""
+        [center][size=18][b]{torrent_title}[/b][/size][/center]
 
 
+        [center][img]https://forward.pm/img/informations.png[/img]
+
+        [b]Réalisateur:[/b] À compléter
+        [b]Acteurs:[/b] 
+        Acteur 1, 
+        Acteur 2, 
+        Acteur 3
+        [b]Durée:[/b] {duration}
+        [b]Genre:[/b] À compléter
+        [b]Année de sortie:[/b] {year}[/center]
+
+        [center][img]https://forward.pm/img/synopsis.png[/img]
+
+        À compléter[/center]
+
+        [center][img]https://forward.pm/img/upload.png[/img]
+        [/center][center][b]Format:[/b] {self.media_info.get('format', 'Unknown')}
+        [b]Langues:[/b] {self.media_info.get('language_tag', 'Unknown')} ({', '.join(self.media_info.get('audio_languages', ['Unknown']))})
+        [b]Source:[/b] {self.media_info.get('source', 'Unknown')}
+        [b]Résolution: [/b]{self.media_info.get('resolution', 'Unknown')} ({self.media_info.get('width', 'Unknown')}x{self.media_info.get('height', 'Unknown')})
+        [b]Codec vidéo:[/b] {self.media_info.get('video_codec', 'Unknown').split(' ')[0]}
+        [b]Bitrate vidéo:[/b] ~{bitrate} kb/s
+        [b]Codec audio:[/b] {', '.join(self.media_info.get('audio_codecs', ['Unknown']))}
+        [b]Sous-titres:[/b] {', '.join(self.media_info.get('subtitle_languages', ['None']))}
+        [b]Durée:[/b] {duration}[/center][left][/left][left][/left]
+
+        """

@@ -4,7 +4,7 @@
 import sys
 import subprocess
 import json
-from typing import Dict,  Set, Any
+from typing import Dict, Set, Any, Tuple
 
 class MediaInfo:
     """
@@ -18,27 +18,45 @@ class MediaInfo:
         :param file_path: str - Path to the media file to analyze
         """
         self.file_path = file_path
+        self.raw_output = ""  # Store raw mediainfo output
         self.info = self._run_mediainfo()
         self.metadata = self._extract_metadata()
 
     def _run_mediainfo(self) -> Dict[str, Any]:
         """
         Execute mediainfo on the file and return the parsed JSON output.
+        Also stores the raw text output for later use.
         
         :return: Dict[str, Any] - Parsed JSON data from mediainfo
         """
         try:
-            result = subprocess.run(
+            # First get the raw text output
+            raw_result = subprocess.run(
+                ['mediainfo', self.file_path],
+                capture_output=True, text=True, check=True
+            )
+            self.raw_output = raw_result.stdout
+            
+            # Then get the JSON output for processing
+            json_result = subprocess.run(
                 ['mediainfo', '--Output=JSON', self.file_path],
                 capture_output=True, text=True, check=True
             )
-            return json.loads(result.stdout)
+            return json.loads(json_result.stdout)
         except subprocess.CalledProcessError as e:
             print(f"Error running mediainfo: {e}")
             sys.exit(1)
         except json.JSONDecodeError:
             print("Error decoding JSON from mediainfo output")
             sys.exit(1)
+    
+    def get_raw_output(self) -> str:
+        """
+        Return the raw mediainfo output.
+        
+        :return: str - Raw mediainfo output
+        """
+        return self.raw_output
 
     def _extract_metadata(self) -> Dict[str, Any]:
         """
