@@ -1,4 +1,4 @@
-# MkTorrent
+# TorrentMate
 
 A comprehensive Python tool to create torrent files, NFO files, and BBCode descriptions for media content.
 
@@ -35,8 +35,8 @@ pip install mktorrent
 Or install from source:
 
 ```bash
-git clone https://github.com/lounisbou/mktorrent.git
-cd mktorrent
+git clone https://github.com/LounisBou/TorrentMate.git
+cd TorrentMate
 pip install -e .
 ```
 
@@ -46,19 +46,19 @@ pip install -e .
 
 ```bash
 # Basic usage
-mktorrent /path/to/media/folder
+torrent-mate /path/to/media/folder
 
 # With custom tracker URL
-mktorrent /path/to/media/folder --tracker http://your-tracker.com:6969/announce
+torrent-mate /path/to/media/folder --tracker http://your-tracker.com:6969/announce
 ```
 
 ### As a Python module
 
 ```python
-from mktorrent import MkTorrent
+from torrentmate import TorrentMate
 
 # Create an instance
-creator = MkTorrent("/path/to/media/folder", 
+creator = TorrentMate("/path/to/media/folder", 
                     tracker_url="http://your-tracker.com:6969/announce")
 
 # Create all files

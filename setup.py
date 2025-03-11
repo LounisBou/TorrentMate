@@ -4,19 +4,19 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="mktorrent",
+    name="TorrentMate",
     version="1.0.0",
     packages=find_packages(),
     install_requires=[],
     
     # Metadata
-    author="MkTorrent Creator",
-    author_email="your.email@example.com",
+    author="LounisBou",
+    author_email="lounis.bou@gmail.com",
     description="A tool to create torrent files, NFO files, and BBCode descriptions for media content",
     long_description=open("README.md").read() if hasattr(__file__, "__file__") else "",
     long_description_content_type="text/markdown",
     keywords="torrent, nfo, bbcode, media, mediainfo",
-    url="https://github.com/lounisbou/mktorrent",
+    url="https://github.com/LounisBou/TorrentMate",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: End Users/Desktop",
@@ -33,7 +33,7 @@ setup(
     # Entry points
     entry_points={
         "console_scripts": [
-            "mktorrent-creator=mktorrent.mktorrent:main",
+            "torrentmate=torrentmate.torrentmate:main",
         ],
     },
 

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from typing import Dict, Any
+from .contentanalyzer import ContentAnalyzer
 
 class ContentGenerator:
     """

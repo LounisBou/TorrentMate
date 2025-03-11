@@ -2,29 +2,27 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
 import subprocess
 import argparse
-
 from .mediainfo import MediaInfo
 from .contentanalyzer import ContentAnalyzer
 from .contentgenerator import ContentGenerator
 
 """
-MkTorrent - A tool to create torrent files, NFO files, and BBCode descriptions for media content.
+TorrentMate - A tool to create torrent files, NFO files, and BBCode descriptions for media content.
 
 This script analyzes media files in a directory, extracts metadata using mediainfo,
 and generates appropriate torrent, NFO, and BBCode files.
 """
 
-class MkTorrent:
+class TorrentMate:
     """
     Main class to create torrent, NFO, and BBCode files for media content.
     """
 
     def __init__(self, folder_path: str, tracker_url: str = "http://tracker.example.com:6969/announce"):
         """
-        Initialize the MkTorrent object.
+        Initialize the TorrentMate object.
         
         :param folder_path: str - Path to the folder containing media content
         :param tracker_url: str - URL of the tracker (Default: "http://tracker.example.com:6969/announce")
@@ -132,7 +130,7 @@ def main():
     args = parser.parse_args()
     
     try:
-        creator = MkTorrent(args.folder, args.tracker)
+        creator = TorrentMate(args.folder, args.tracker)
         success = creator.create_all()
         
         if success:
